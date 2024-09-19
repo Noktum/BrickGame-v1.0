@@ -5,12 +5,11 @@ void game_init() {
   WINDOW *play_field = newwin(22, 22, 0, 22);
   WINDOW *stats = newwin(12, 22, 0, 0);
   init_colors();
-  GameState_t state = START;
-  screen_init(keys, play_field, stats, state);
+  GameState_t *state = state_getter();
+  screen_init(keys, play_field, stats, *state);
   keypad(play_field, TRUE);
   nodelay(play_field, TRUE);
-  int c = ' ';
-  gameloop(play_field, stats, &c, &state);
+  gameloop(play_field, stats, state);
   gameover(play_field, stats);
   delwin(keys);
   delwin(play_field);
@@ -40,46 +39,35 @@ void screen_init(WINDOW *keys, WINDOW *play_field, WINDOW *stats,
   wrefresh(play_field);
 }
 
-void gameloop(WINDOW *play_field, WINDOW *stats, int *c, GameState_t *state) {
+void gameloop(WINDOW *play_field, WINDOW *stats, GameState_t *state) {
   GameInfo_t info = updateCurrentState();
   UserAction_t action = -1;
-  int flag = 1;
   bool hold = FALSE;
-  wgetch(play_field);
-  // clock_t start = clock();
-  // clock_t end = clock();
-  while (*c != 'o' && *c != 'O' && flag) {
-    *c = wgetch(play_field);
-    switch (*c) {
-      case '\n':
-        action = Start;
-        break;
-      case 'p':
-      case 'P':
-        action = Pause;
-        break;
-      case KEY_DOWN:
-        action = Down;
-        hold = TRUE;
-        break;
-      case KEY_LEFT:
-        action = Left;
-        break;
-      case KEY_RIGHT:
-        action = Right;
-        break;
-      case 'e':
-      case 'E':
-        action = Action;
-        break;
-      default:
-        break;
+  clock_t start = clock();
+  while (info.pause != 2) {
+    info = updateCurrentState();
+    int c = wgetch(play_field);
+    if (c == 'o' || c == 'O') {
+      action = Terminate;
+    } else if (c == '\n') {
+      action = Start;
+    } else if (c == 'p' || c == 'P') {
+      action = Pause;
+    } else if (c == KEY_DOWN) {
+      action = Down;
+      hold = true;
+    } else if (c == KEY_LEFT) {
+      action = Left;
+    } else if (c == KEY_RIGHT) {
+      action = Right;
+    } else if (c == 'e' || c == 'E') {
+      action = Action;
     }
-    // end = clock();
+    clock_t end = clock();
     userInput(action, hold);
-    finite_state_machine(action, state, &flag);
-    usleep(info.speed * 600);
-    redraw_field(play_field, stats, *state);
+    moving(&start, &end);
+    if (action > 0 || end - start >= (long unsigned int)info.speed)
+      redraw_field(play_field, stats, *state);
     action = -1;
     hold = FALSE;
   }

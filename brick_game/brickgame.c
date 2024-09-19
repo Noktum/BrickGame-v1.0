@@ -27,7 +27,7 @@ GameInfo_t *struct_init() {
     srand(time(NULL));
     info.level = 1;
     info.score = 0;
-    info.speed = 1000;
+    info.speed = 300000;
     info.high_score = read_high_score();
     info.field = malloc(22 * sizeof(int *));
     for (int i = 0; i < 22; i++) {
@@ -133,19 +133,96 @@ void score_fnc() {
   }
 }
 
-void finite_state_machine(UserAction_t action, GameState_t *state, int *flag) {
+// moving figure between steps down
+void shifting(UserAction_t action, bool hold) {
+  GameInfo_t *info = struct_init();
+  Figure_t *figure = figure_init();
+  GameState_t *state = state_getter();
+  if (action == Left) {
+    move_left();
+    if (check_collide()) {
+      move_right();
+    }
+  } else if (action == Right) {
+    move_right();
+    if (check_collide()) {
+      move_left();
+    }
+  } else if (action == Down) {
+    while (!check_collide() && hold) {
+      move_down();
+    }
+    move_up();
+  } else if (action == Action) {
+    rotate_right(figure->figure);
+    if (check_collide()) {
+      rotate_left(figure->figure);
+    }
+  } else if (action == Terminate) {
+    *state = GAMEOVER;
+  } else if (action == Pause) {
+    info->pause = 1;
+    *state = PAUSE;
+  } else {
+    *state = MOVING;
+  }
+}
+
+GameState_t *state_getter() {
+  static GameState_t state = START;
+  return &state;
+}
+
+void moving(clock_t *start, clock_t *end) {
+  GameState_t *state = state_getter();
   Figure_t *figure = figure_init();
   GameInfo_t *info = struct_init();
   if (*state == MOVING) {
-    if (action == Pause) {
-      *state = PAUSE;
+    *end = clock();
+    if (*end - *start >= (long unsigned int)info->speed) {
+      *start = *end;
+      figure->y++;
+      if (check_collide()) {
+        figure->y--;
+        *state = ATTACH;
+      } else {
+        *state = SHIFTING;
+      }
+    } else {
+      *state = SHIFTING;
     }
-    figure->y++;
-    bool collide = check_collide(info->field);
-    if (collide) {
-      figure->y--;
-      *state = ATTACH;
+  }
+}
+
+// idk what to do with that
+void userInput(UserAction_t action, bool hold) {
+  Figure_t *figure = figure_init();
+  GameInfo_t *info = struct_init();
+  GameState_t *state = state_getter();
+
+  if (*state == START) {
+    if (action == Start) {
+      *state = SPAWN;
+    } else if (action == Terminate) {
+      *state = EXIT;
     }
+
+  } else if (*state == SPAWN) {
+    if (info->level > 10) {
+      *state = WIN;
+    } else {
+      figure_respawn();
+      copy_figure(figure->next, info->next);
+      if (check_collide(info->field)) {
+        *state = GAMEOVER;
+      } else {
+        *state = MOVING;
+      }
+    }
+
+  } else if (*state == SHIFTING) {
+    shifting(action, hold);
+
   } else if (*state == ATTACH) {
     for (int i = 0; i < 4; i++) {
       for (int j = 0; j < 4; j++) {
@@ -157,64 +234,17 @@ void finite_state_machine(UserAction_t action, GameState_t *state, int *flag) {
     }
     score_fnc();
     *state = SPAWN;
-  } else if (*state == SPAWN) {
-    figure_respawn(figure);
-    copy_figure(figure->next, info->next);
-    bool collide = check_collide(info->field);
-    if (collide) {
-      *state = GAMEOVER;
-    } else {
-      *state = MOVING;
-    }
-  } else if (*state == START && action == Start) {
-    *state = SPAWN;
-  } else if (*state == GAMEOVER) {
-    *flag = false;
+
   } else if (*state == PAUSE) {
     if (action == Pause) {
+      info->pause = 0;
       *state = MOVING;
+    } else if (action == Terminate) {
+      *state = EXIT;
     }
-  }
-}
-
-// idk what to do with that
-void userInput(UserAction_t action, bool hold) {
-  Figure_t *figure = figure_init();
-  // static GameState_t state;
-  switch (action) {
-    case Start:
-      break;
-    case Pause:
-      break;
-    case Terminate:
-      break;
-    case Left:
-      move_left();
-      if (check_collide()) {
-        move_right();
-      }
-      break;
-    case Right:
-      move_right();
-      if (check_collide()) {
-        move_left();
-      }
-      break;
-    case Up:
-      break;
-    case Down:
-      while (!check_collide() && hold) {
-        move_down();
-      }
-      move_up();
-      break;
-    case Action:
-      rotate_right(figure->figure);
-      if (check_collide()) {
-        rotate_left(figure->figure);
-      }
-      break;
-    default:
-      break;
+  } else if (*state == WIN || *state == GAMEOVER) {
+    *state = EXIT;
+  } else if (*state == EXIT) {
+    info->pause = 2;
   }
 }

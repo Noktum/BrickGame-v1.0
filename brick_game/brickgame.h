@@ -51,7 +51,9 @@ void game_end();
 bool check_collide();
 void delete_string(int str);
 void score_fnc();
-void finite_state_machine(UserAction_t action, GameState_t *state, int *flag);
+void shifting(UserAction_t action, bool hold);
+GameState_t *state_getter();
+void moving(clock_t *start, clock_t *end);
 void userInput(UserAction_t action, bool hold);
 
 #endif
