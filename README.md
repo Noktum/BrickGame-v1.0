@@ -1,1 +1,1 @@
-# BrickGame-v1.0
+# BrickGame v1.0
