@@ -180,6 +180,7 @@ void finite_state_machine(UserAction_t action, GameState_t *state, int *flag) {
 // idk what to do with that
 void userInput(UserAction_t action, bool hold) {
   Figure_t *figure = figure_init();
+  // static GameState_t state;
   switch (action) {
     case Start:
       break;
@@ -189,9 +190,15 @@ void userInput(UserAction_t action, bool hold) {
       break;
     case Left:
       move_left();
+      if (check_collide()) {
+        move_right();
+      }
       break;
     case Right:
       move_right();
+      if (check_collide()) {
+        move_left();
+      }
       break;
     case Up:
       break;
@@ -203,6 +210,9 @@ void userInput(UserAction_t action, bool hold) {
       break;
     case Action:
       rotate_right(figure->figure);
+      if (check_collide()) {
+        rotate_left(figure->figure);
+      }
       break;
     default:
       break;

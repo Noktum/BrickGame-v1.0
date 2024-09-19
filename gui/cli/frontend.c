@@ -45,8 +45,9 @@ void gameloop(WINDOW *play_field, WINDOW *stats, int *c, GameState_t *state) {
   UserAction_t action = -1;
   int flag = 1;
   bool hold = FALSE;
-  timeout(info.speed);
   wgetch(play_field);
+  // clock_t start = clock();
+  // clock_t end = clock();
   while (*c != 'o' && *c != 'O' && flag) {
     *c = wgetch(play_field);
     switch (*c) {
@@ -74,13 +75,13 @@ void gameloop(WINDOW *play_field, WINDOW *stats, int *c, GameState_t *state) {
       default:
         break;
     }
+    // end = clock();
     userInput(action, hold);
     finite_state_machine(action, state, &flag);
     usleep(info.speed * 600);
     redraw_field(play_field, stats, *state);
     action = -1;
     hold = FALSE;
-    // updateCurrentState();
   }
 }
 

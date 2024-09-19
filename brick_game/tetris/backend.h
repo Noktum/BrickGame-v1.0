@@ -26,6 +26,7 @@ void move_right();
 void move_down();
 void move_up();
 void rotate_right(int **matrix);
+void rotate_left(int **matrix);
 void spawn();
 void figure_respawn();
 

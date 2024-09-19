@@ -103,6 +103,20 @@ void rotate_right(int **matrix) {
   free(copy);
 }
 
+void rotate_left(int **matrix) {
+  int **copy = figure_alloc();
+  copy_figure(matrix, copy);
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) {
+      matrix[3 - i][j] = copy[j][i];
+    }
+  }
+  for (int i = 0; i < 4; i++) {
+    free(copy[i]);
+  }
+  free(copy);
+}
+
 // creates a new certain figure in figure.next
 void spawn() {
   Figure_t *figure = figure_init();
