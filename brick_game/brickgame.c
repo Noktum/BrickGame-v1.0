@@ -84,7 +84,7 @@ bool check_collide() {
   return collide;
 }
 
-// delete string from field
+// delete string from field (idk how it works)
 void delete_string(int str) {
   GameInfo_t *info = struct_init();
   for (int i = 20; i >= 0; i--) {
@@ -128,9 +128,16 @@ void score_fnc() {
     update_high_score_file(info->high_score);
   }
   if (info->level * 600 <= info->score) {
+    srand(time(NULL)); // randomize figures on each level
     info->level = info->score / 600 + 1;
-    info->speed -= 100;
+    info->speed = info->speed - 29000;
   }
+}
+
+// initializing game state and getting it
+GameState_t *state_getter() {
+  static GameState_t state = START;
+  return &state;
 }
 
 // moving figure between steps down
@@ -168,11 +175,7 @@ void shifting(UserAction_t action, bool hold) {
   }
 }
 
-GameState_t *state_getter() {
-  static GameState_t state = START;
-  return &state;
-}
-
+// moving figure 1 step down
 void moving(clock_t *start, clock_t *end) {
   GameState_t *state = state_getter();
   Figure_t *figure = figure_init();
@@ -194,7 +197,7 @@ void moving(clock_t *start, clock_t *end) {
   }
 }
 
-// idk what to do with that
+// finite state machine with user input
 void userInput(UserAction_t action, bool hold) {
   Figure_t *figure = figure_init();
   GameInfo_t *info = struct_init();

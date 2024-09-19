@@ -3,8 +3,9 @@
 
 #include "tetris/backend.h"
 
-#define FIELD_X 10
-#define FIELD_Y 20
+/* delete this block? */
+#define FIELD_X 12
+#define FIELD_Y 22
 #define STEP 1
 #define PAUSE_KEY 'p'
 #define ROTATE_KEY_R 'e'
@@ -16,7 +17,7 @@ typedef enum {
   Terminate,
   Left,
   Right,
-  Up,  // dont needed there
+  Up,  // don't needed there
   Down,
   Action
 } UserAction_t;
@@ -28,7 +29,7 @@ typedef struct {
   int high_score;
   int level;
   int speed;
-  int pause;  // what to do with that?
+  int pause;  // 0 - play, 1 - pause, 2 - exit
 } GameInfo_t;
 
 typedef enum {
@@ -51,8 +52,8 @@ void game_end();
 bool check_collide();
 void delete_string(int str);
 void score_fnc();
-void shifting(UserAction_t action, bool hold);
 GameState_t *state_getter();
+void shifting(UserAction_t action, bool hold);
 void moving(clock_t *start, clock_t *end);
 void userInput(UserAction_t action, bool hold);
 

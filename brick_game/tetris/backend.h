@@ -11,9 +11,9 @@ typedef struct {
   int **next;
   int x;
   int y;
-  int type;
-  int next_type;
-  int next_rotate;
+  int type; // type of figure for frontend
+  int next_type; // type of next figure for creating it
+  int next_rotate; // random rotation
 } Figure_t;
 
 Figure_t *figure_init();

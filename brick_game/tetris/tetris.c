@@ -103,6 +103,7 @@ void rotate_right(int **matrix) {
   free(copy);
 }
 
+// u know what i mean 2
 void rotate_left(int **matrix) {
   int **copy = figure_alloc();
   copy_figure(matrix, copy);
