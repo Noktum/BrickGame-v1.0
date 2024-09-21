@@ -1,6 +1,8 @@
 #ifndef BRICKGAME
 #define BRICKGAME
 
+#include <stdbool.h>
+
 #include "tetris/backend.h"
 
 /* delete this block? */

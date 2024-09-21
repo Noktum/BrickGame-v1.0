@@ -44,14 +44,15 @@ void clear_figure(int **matrix) {
 }
 
 // checks is figure collide into border
-bool check_border() {
+char check_border() {
   Figure_t *figure = figure_init();
-  bool collapse = false;
+  char collapse = 0;
   for (int i = 0; i < 4 && !collapse; i++) {
     for (int j = 0; j < 4 && !collapse; j++) {
-      if (figure->figure[i][j] &&
-          (figure->x - 1 + j < 1 || figure->x - 1 + j > 10)) {
-        collapse = true;
+      if (figure->figure[i][j] && figure->x - 1 + j < 1) {
+        collapse = 1;
+      } else if (figure->figure[i][j] && figure->x - 1 + j > 10) {
+        collapse = 2;
       }
     }
   }

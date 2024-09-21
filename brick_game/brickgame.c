@@ -128,7 +128,7 @@ void score_fnc() {
     update_high_score_file(info->high_score);
   }
   if (info->level * 600 <= info->score) {
-    srand(time(NULL)); // randomize figures on each level
+    srand(time(NULL));  // randomize figures on each level
     info->level = info->score / 600 + 1;
     info->speed = info->speed - 29000;
   }
@@ -162,6 +162,19 @@ void shifting(UserAction_t action, bool hold) {
     move_up();
   } else if (action == Action) {
     rotate_right(figure->figure);
+    if (check_border() == 1) {
+      move_right();
+      if (check_collide()) {
+        move_left();
+        rotate_left(figure->figure);
+      }
+    } else if (check_border() == 2) {
+      move_left();
+      if (check_collide()) {
+        move_right();
+        rotate_left(figure->figure);
+      }
+    }
     if (check_collide()) {
       rotate_left(figure->figure);
     }

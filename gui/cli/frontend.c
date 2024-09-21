@@ -106,7 +106,7 @@ void gameloop(WINDOW *play_field, WINDOW *stats, GameState_t *state) {
   GameInfo_t info = updateCurrentState();
   UserAction_t action = -1;
   bool hold = FALSE;
-  clock_t start = clock();
+  clock_t start = clock() - CLOCKS_PER_SEC;
   while (info.pause != 2) {
     info = updateCurrentState();
     int c = wgetch(play_field);
@@ -126,7 +126,7 @@ void gameloop(WINDOW *play_field, WINDOW *stats, GameState_t *state) {
     } else if (c == 'e' || c == 'E') {
       action = Action;
     }
-    clock_t end = clock();
+    clock_t end;
     userInput(action, hold);
     moving(&start, &end);
     // if (action > 0 || end - start >= (long unsigned int)info.speed)
