@@ -138,11 +138,29 @@ void gameloop(WINDOW *play_field, WINDOW *stats, GameState_t *state) {
 
 // will write player stats when game is finished
 void gameover(WINDOW *play_field, WINDOW *stats) {
-  mvwprintw(play_field, 10, 2, "GAME OVER");
+  GameState_t state = *state_getter();
+  GameInfo_t info = updateCurrentState();
+  for (int i = 1; i <= 20 && info.field; i++) {
+    for (int j = 1; j <= 10; j++) {
+      mvwaddch(play_field, i, j * 2 - 1, ' ');
+      mvwaddch(play_field, i, j * 2, ' ');
+    }
+  }
+  if (state == WIN) {
+    mvwprintw(play_field, 10, 7, "GOOIDAA!");
+  } else if (state == GAMEOVER) {
+    mvwprintw(play_field, 8, 7, "GAMEOVER");
+    mvwprintw(play_field, 9, 6, "Level: %d", info.level);
+    mvwprintw(play_field, 10, 2, "Your score: %d", info.score);
+    mvwprintw(play_field, 11, 2, "Highest score: %d", info.high_score);
+  }
   update_stats(stats);
   wrefresh(play_field);
   game_end();
-  wgetch(play_field);
+  int c = ' ';
+  while (c != 'O' && c != 'o') {
+    c = wgetch(play_field);
+  }
 }
 
 // creates windows and launches all other functions

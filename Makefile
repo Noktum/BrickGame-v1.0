@@ -1,4 +1,4 @@
-GCC = gcc -Wall -Wextra -Werror -std=c11
+GCC = gcc -Wall -Wextra -Werror -std=c11 -g
 FILES = brickgame.c brick_game/tetris/tetris.c gui/cli/frontend.c brick_game/brickgame.c
 BACK = brick_game/tetris/tetris.c brick_game/brickgame.c
 OS = $(shell uname)

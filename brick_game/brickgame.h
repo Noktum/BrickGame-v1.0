@@ -42,8 +42,7 @@ typedef enum {
   SHIFTING,  // moment where fig is movin left/right
   GAMEOVER,  // gameover through overflow
   WIN,       // level 11 is reached
-  ATTACH,    // copy figure to field
-  EXIT       // exit by win, gameover or key
+  ATTACH    // copy figure to field
 } GameState_t;
 
 int read_high_score();

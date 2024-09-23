@@ -64,7 +64,7 @@ char check_border() {
 void move_left() {
   Figure_t *figure = figure_init();
   figure->x--;
-  if (check_border()) {
+  if (check_border() == 1) {
     figure->x++;
   }
 }
@@ -72,7 +72,7 @@ void move_left() {
 void move_right() {
   Figure_t *figure = figure_init();
   figure->x++;
-  if (check_border()) {
+  if (check_border() == 2) {
     figure->x--;
   }
 }

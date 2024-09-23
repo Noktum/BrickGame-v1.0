@@ -27,7 +27,7 @@ GameInfo_t *struct_init() {
     srand(time(NULL));
     info.level = 1;
     info.score = 0;
-    info.speed = 300000;
+    info.speed = 800000;
     info.high_score = read_high_score();
     info.field = malloc(22 * sizeof(int *));
     for (int i = 0; i < 22; i++) {
@@ -129,8 +129,9 @@ void score_fnc() {
   }
   if (info->level * 600 <= info->score) {
     srand(time(NULL));  // randomize figures on each level
+    double coefficient = 1.6 - (double)info->level / 15;
     info->level = info->score / 600 + 1;
-    info->speed = info->speed - 29000;
+    info->speed = info->speed / coefficient;  // increasing speed
   }
 }
 
@@ -195,7 +196,7 @@ void moving(clock_t *start, clock_t *end) {
   GameInfo_t *info = struct_init();
   if (*state == MOVING) {
     *end = clock();
-    if (*end - *start >= (long unsigned int)info->speed) {
+    if (*end - *start >= (clock_t)info->speed) {
       *start = *end;
       figure->y++;
       if (check_collide()) {
@@ -220,7 +221,7 @@ void userInput(UserAction_t action, bool hold) {
     if (action == Start) {
       *state = SPAWN;
     } else if (action == Terminate) {
-      *state = EXIT;
+      *state = GAMEOVER;
     }
 
   } else if (*state == SPAWN) {
@@ -256,11 +257,9 @@ void userInput(UserAction_t action, bool hold) {
       info->pause = 0;
       *state = MOVING;
     } else if (action == Terminate) {
-      *state = EXIT;
+      *state = GAMEOVER;
     }
   } else if (*state == WIN || *state == GAMEOVER) {
-    *state = EXIT;
-  } else if (*state == EXIT) {
     info->pause = 2;
   }
 }
