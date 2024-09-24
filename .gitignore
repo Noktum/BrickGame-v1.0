@@ -2,6 +2,7 @@
 high_score.txt
 build
 .clang-format
+html
 
 # Libraries
 *.lib

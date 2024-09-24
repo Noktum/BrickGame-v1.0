@@ -106,7 +106,7 @@ void gameloop(WINDOW *play_field, WINDOW *stats, GameState_t *state) {
   GameInfo_t info = updateCurrentState();
   UserAction_t action = -1;
   bool hold = FALSE;
-  clock_t start = clock() - CLOCKS_PER_SEC;
+  clock_t start = clock();
   while (info.pause != 2) {
     info = updateCurrentState();
     int c = wgetch(play_field);

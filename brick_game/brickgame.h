@@ -1,48 +1,45 @@
 #ifndef BRICKGAME
 #define BRICKGAME
 
+/// @file brickgame.h
+
 #include <stdbool.h>
 
 #include "tetris/backend.h"
 
-/* delete this block? */
-#define FIELD_X 12
-#define FIELD_Y 22
-#define STEP 1
-#define PAUSE_KEY 'p'
-#define ROTATE_KEY_R 'e'
-#define ROTATE_KEY_L 'q'
-
+/// @brief Enumeration of all possible user actions
 typedef enum {
-  Start,
-  Pause,
-  Terminate,
-  Left,
-  Right,
-  Up,  // don't needed there
-  Down,
-  Action
+  Start,      ///< Launches the game from START state
+  Pause,      ///< Pause and resume action
+  Terminate,  ///< Exit from game with GAMEOVER state
+  Left,       ///< Moves the figure left
+  Right,      ///< Moves the figure right
+  Up,         ///< Doing nothing in this version
+  Down,       ///< Moves the figure straight
+  Action      ///< Rotates the figure clockwise
 } UserAction_t;
 
+/// @brief Structure, that contains game stats and information
 typedef struct {
-  int **field;
-  int **next;
-  int score;
-  int high_score;
-  int level;
-  int speed;
-  int pause;  // 0 - play, 1 - pause, 2 - exit
+  int **field;     ///< Game field with fallen figures
+  int **next;      ///< Next figure, displayed in states
+  int score;       ///< Playes score in current game
+  int high_score;  ///< Highest score through all played games
+  int level;       ///< Current level
+  int speed;       ///< Game speed
+  int pause;  ///< Pause info, possible values: 0 - play, 1 - pause, 2 - exit
 } GameInfo_t;
 
+/// @brief Enumeration of possible game states
 typedef enum {
-  START,     // waits till enter is pressed
-  PAUSE,     // pause
-  SPAWN,     // spawn new figure on field
-  MOVING,    // moving figure down
-  SHIFTING,  // moment where fig is movin left/right
-  GAMEOVER,  // gameover through overflow
-  WIN,       // level 11 is reached
-  ATTACH    // copy figure to field
+  START,     ///< waits till enter is pressed
+  PAUSE,     ///< pause
+  SPAWN,     ///< spawn new figure on field
+  MOVING,    ///< moving figure down
+  SHIFTING,  ///< moment where fig is movin left/right
+  GAMEOVER,  ///< gameover through overflow
+  WIN,       ///< level 11 is reached
+  ATTACH     ///< copy figure to field
 } GameState_t;
 
 int read_high_score();

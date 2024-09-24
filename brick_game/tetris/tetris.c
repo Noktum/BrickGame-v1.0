@@ -1,5 +1,8 @@
 #include "backend.h"
 
+/// @file tetris.c
+/// @brief implementation of functions from backend.h
+
 // init and edit figure on field
 Figure_t *figure_init() {
   static Figure_t figure;
