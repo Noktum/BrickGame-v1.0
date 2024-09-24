@@ -26,20 +26,20 @@ typedef struct {
   int score;       ///< Playes score in current game
   int high_score;  ///< Highest score through all played games
   int level;       ///< Current level
-  int speed;       ///< Game speed
+  int speed;       ///< Delay between each time the figure falls down
   int pause;  ///< Pause info, possible values: 0 - play, 1 - pause, 2 - exit
 } GameInfo_t;
 
 /// @brief Enumeration of possible game states
 typedef enum {
-  START,     ///< waits till enter is pressed
-  PAUSE,     ///< pause
-  SPAWN,     ///< spawn new figure on field
-  MOVING,    ///< moving figure down
-  SHIFTING,  ///< moment where fig is movin left/right
-  GAMEOVER,  ///< gameover through overflow
-  WIN,       ///< level 11 is reached
-  ATTACH     ///< copy figure to field
+  START,     ///< First state of the game, waits till ENTER is pressed
+  PAUSE,     ///< Pause state when game is freezed
+  SPAWN,     ///< State, when new figure appears on field
+  MOVING,    ///< State, when figure moves 1 step down
+  SHIFTING,  ///< State, when playes can rotate and move figure in different directions
+  GAMEOVER,  ///< If field overflows, this state activates
+  WIN,       ///< If player reaches 11 level, this state activates
+  ATTACH     ///< State, when figure attaches to field
 } GameState_t;
 
 int read_high_score();
@@ -48,7 +48,7 @@ GameInfo_t *struct_init();
 GameInfo_t updateCurrentState();
 void game_end();
 bool check_collide();
-void delete_string(int str);
+void delete_line(int str);
 void score_fnc();
 GameState_t *state_getter();
 void shifting(UserAction_t action, bool hold);

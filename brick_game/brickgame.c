@@ -48,7 +48,8 @@ GameInfo_t *struct_init() {
   return &info;
 }
 
-/// return game info for frontend
+/// @brief Updates information of game info
+/// @return Values from GameInfo_t structure
 GameInfo_t updateCurrentState() {
   GameInfo_t *info = struct_init();
   return *info;
@@ -73,7 +74,8 @@ void game_end() {
   free(info->next);
 }
 
-/// check if figure collides with others under it
+/// @brief Checks if figure collides with others under it or not
+/// @return False if it doesn't collide, True if collides
 bool check_collide() {
   Figure_t *figure = figure_init();
   GameInfo_t *info = struct_init();
@@ -91,8 +93,9 @@ bool check_collide() {
   return collide;
 }
 
-/// delete string from field (idk how it works)
-void delete_string(int str) {
+/// @brief Deletes string from field (idk how it works)
+/// @param str - number of deleting string
+void delete_line(int str) {
   GameInfo_t *info = struct_init();
   for (int i = 20; i >= 0; i--) {
     for (int j = 1; j <= 10; j++) {
@@ -104,11 +107,12 @@ void delete_string(int str) {
   }
 }
 
-/// counting score, level and speed of game
+/// @brief Calculates the score, level and speed of game based on number of
+/// destroyed lines
 void score_fnc() {
   GameInfo_t *info = struct_init();
   int number = 0;
-  int flag = 0;
+  int flag = 0;  //< Indicates that line is empty
   for (int i = 1; i <= 20; i++) {
     for (int j = 1; j <= 10; j++) {
       if (info->field[i][j] == 0) {
@@ -117,7 +121,7 @@ void score_fnc() {
       }
     }
     if (flag == 0) {
-      delete_string(i);
+      delete_line(i);
       number++;
     }
     flag = 0;
@@ -132,24 +136,29 @@ void score_fnc() {
     info->score += 1500;
   if (info->score > info->high_score) {
     info->high_score = info->score;
-    update_high_score_file(info->high_score);
+    update_high_score_file(
+        info->high_score);  ///< Updating highest score if current is higher
   }
   if (info->level * 600 <= info->score) {
-    srand(time(NULL));  /// randomize figures on each level
-    double coefficient = 1.6 - (double)info->level / 15;
+    srand(time(NULL));  ///< Randomizing figures per each level
+    double coefficient =
+        1.6 - (double)info->level /
+                  15;  ///< Special formula for smooth increase of speed
     info->level = info->score / 600 + 1;
-    info->speed = info->speed / coefficient;  /// increasing speed
+    info->speed = info->speed / coefficient;  ///< Increasing speed
   }
 }
 
-/// initializing game state and getting it
+/// @brief Getting the current game state
+/// @return GameState_t pointer
 GameState_t *state_getter() {
   static GameState_t state = START;
   return &state;
 }
 
-/// moving figure in any directions while state == SHIFTING,
-/// the time between MOVING states
+/// @brief Moving figure in any directions while state == SHIFTING
+/// @param action - UserAction_t action gotten from keyboard
+/// @param hold - button is hold or not
 void shifting(UserAction_t action, bool hold) {
   GameInfo_t *info = struct_init();
   Figure_t *figure = figure_init();
@@ -197,7 +206,9 @@ void shifting(UserAction_t action, bool hold) {
   }
 }
 
-/// moving figure 1 step down when state == MOVING
+/// @brief Moving figure 1 step down when state == MOVING
+/// @param start - previous call time when whis function executed
+/// @param end - current call time of this function
 void moving(clock_t *start, clock_t *end) {
   GameState_t *state = state_getter();
   Figure_t *figure = figure_init();
@@ -219,10 +230,10 @@ void moving(clock_t *start, clock_t *end) {
   }
 }
 
-/// @brief attaching figure to field
-/// @param state
-/// @param figure
-/// @param info
+/// @brief Attaches figure to field
+/// @param state - current state of the game
+/// @param figure - current figure that will be attached to field
+/// @param info - GameInfo_t structure with game field
 void attaching(GameState_t *state, Figure_t figure, GameInfo_t *info) {
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
@@ -235,21 +246,19 @@ void attaching(GameState_t *state, Figure_t figure, GameInfo_t *info) {
   *state = SPAWN;
 }
 
-/// @brief "finite state machine" with user input
-/// @param action
-/// @param hold
+/// @brief "Finite State Machine" with user input
+/// @param action - UserAction_t action gotten from keyboard
+/// @param hold - button is hold or not
 void userInput(UserAction_t action, bool hold) {
   Figure_t *figure = figure_init();
   GameInfo_t *info = struct_init();
   GameState_t *state = state_getter();
-  /// first state, when game is launched
   if (*state == START) {
     if (action == Start) {
       *state = SPAWN;
     } else if (action == Terminate) {
       *state = GAMEOVER;
     }
-    /// state, when new figure is generated on field
   } else if (*state == SPAWN) {
     if (info->level > 10) {
       *state = WIN;
@@ -262,13 +271,10 @@ void userInput(UserAction_t action, bool hold) {
         *state = MOVING;
       }
     }
-    /// state, when you can move figure in any direction
   } else if (*state == SHIFTING) {
     shifting(action, hold);
-    /// state, when figure is copying to field
   } else if (*state == ATTACH) {
     attaching(state, *figure, info);
-    /// state, when game is paused
   } else if (*state == PAUSE) {
     if (action == Pause) {
       info->pause = 0;
@@ -276,7 +282,6 @@ void userInput(UserAction_t action, bool hold) {
     } else if (action == Terminate) {
       *state = GAMEOVER;
     }
-    /// state, when game is finished
   } else if (*state == WIN || *state == GAMEOVER) {
     info->pause = 2;
   }

@@ -41,9 +41,9 @@ clean:
 
 dox_install:
 ifeq ($(OS), Linux)
-	sudo apt install -y doxygen
+	sudo apt install -y doxygen graphviz
 else
-	brew install doxygen
+	brew install doxygen graphviz
 endif
 
 clang:
