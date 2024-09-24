@@ -4,7 +4,7 @@ FILES = brickgame.c brick_game/tetris/tetris.c gui/cli/frontend.c brick_game/bri
 BACK = brick_game/tetris/tetris.c brick_game/brickgame.c
 OS = $(shell uname)
 
-all: clean install 
+all: clean install dvi
 
 lib: $(BACK)
 	mkdir -p build

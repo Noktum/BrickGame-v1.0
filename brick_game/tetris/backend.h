@@ -2,6 +2,7 @@
 #define TETRIS
 
 /// @file backend.h
+/// @brief Declarates used functions and Figure_t structure
 
 #include <stdio.h>
 #include <stdlib.h>

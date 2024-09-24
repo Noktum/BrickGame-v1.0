@@ -1,9 +1,10 @@
 #include "backend.h"
 
 /// @file tetris.c
-/// @brief implementation of functions from backend.h
+/// @brief Implementation of functions from backend.h
 
-// init and edit figure on field
+/// @brief Initializes falling figure and its information
+/// @return Figure_t structure
 Figure_t *figure_init() {
   static Figure_t figure;
   if (figure.figure == NULL) {
@@ -19,7 +20,8 @@ Figure_t *figure_init() {
   return &figure;
 }
 
-// allocate memory for figures
+/// @brief Allocates memory for matrix 4x4 (all figures in game)
+/// @return Pointer to allocated memory
 int **figure_alloc() {
   int **matrix = malloc(4 * sizeof(int *));
   for (int i = 0; i < 4; i++) {
@@ -28,7 +30,9 @@ int **figure_alloc() {
   return matrix;
 }
 
-// copy fig for smth
+/// @brief Copies figure to another matrix
+/// @param orig - original matrix
+/// @param copy - where it will be copied
 void copy_figure(int **orig, int **copy) {
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
@@ -37,7 +41,8 @@ void copy_figure(int **orig, int **copy) {
   }
 }
 
-// clears matrix to reassign values
+/// @brief Clears the matrix - sets 0 to all cells
+/// @param matrix - matrix that will be cleaned
 void clear_figure(int **matrix) {
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
@@ -46,7 +51,8 @@ void clear_figure(int **matrix) {
   }
 }
 
-// checks is figure collide into border
+/// @brief Checks is the figure collides into border or not
+/// @return 0 if it doesn't collide, 1 - collides in left, 2 - in right ones
 char check_border() {
   Figure_t *figure = figure_init();
   char collapse = 0;
@@ -64,6 +70,7 @@ char check_border() {
 
 /* MOVE TO DIFF DIRECTIONS */
 
+/// @brief Moves figure 1 step left
 void move_left() {
   Figure_t *figure = figure_init();
   figure->x--;
@@ -72,6 +79,7 @@ void move_left() {
   }
 }
 
+/// @brief Moves figure 1 step right
 void move_right() {
   Figure_t *figure = figure_init();
   figure->x++;
@@ -80,11 +88,13 @@ void move_right() {
   }
 }
 
+/// @brief Moves figure 1 step down
 void move_down() {
   Figure_t *figure = figure_init();
   figure->y++;
 }
 
+/// @brief Moves figure 1 step up
 void move_up() {
   Figure_t *figure = figure_init();
   figure->y--;
@@ -92,7 +102,8 @@ void move_up() {
 
 /***************************/
 
-// u know what i mean
+/// @brief Rotates the figure clockwise
+/// @param matrix - figure matrix
 void rotate_right(int **matrix) {
   int **copy = figure_alloc();
   copy_figure(matrix, copy);
@@ -107,7 +118,8 @@ void rotate_right(int **matrix) {
   free(copy);
 }
 
-// u know what i mean 2
+/// @brief Rotates the figure counterclockwise
+/// @param matrix - figure matrix
 void rotate_left(int **matrix) {
   int **copy = figure_alloc();
   copy_figure(matrix, copy);
@@ -122,7 +134,7 @@ void rotate_left(int **matrix) {
   free(copy);
 }
 
-// creates a new certain figure in figure.next
+/// @brief Fills right cells in matrix to create certain figure
 void spawn() {
   Figure_t *figure = figure_init();
   int **matrix = figure->next;
@@ -155,7 +167,7 @@ void spawn() {
   }
 }
 
-// recreates figure on field, randomize next figure
+/// @brief Recreates figure on field, generates next figure
 void figure_respawn() {
   Figure_t *figure = figure_init();
   figure->x = 4;
