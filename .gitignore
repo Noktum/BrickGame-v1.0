@@ -17,3 +17,9 @@ html
 
 # Executables
 *.out
+
+# Testers
+test
+*.gcda
+*.gcno
+report

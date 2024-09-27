@@ -28,7 +28,7 @@ typedef struct {
   int high_score;  ///< Highest score through all played games
   int level;       ///< Current level
   int speed;       ///< Delay between each time the figure falls down
-  int pause;  ///< Pause info, possible values: 0 - play, 1 - pause, 2 - exit
+  int pause;       ///< Game regime: 0 - play, 1 - pause, 2 - exit
 } GameInfo_t;
 
 /// @brief Enumeration of possible game states

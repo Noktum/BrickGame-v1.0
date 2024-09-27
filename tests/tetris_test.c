@@ -11,7 +11,7 @@
 
 START_TEST(initialization)
 {
-#line 5
+#line 6
   GameInfo_t info = updateCurrentState();
   Figure_t *figure = figure_init();
   ck_assert_int_eq(info.level, 1);
@@ -24,28 +24,121 @@ START_TEST(initialization)
 
 }
 END_TEST
-
-START_TEST(movement)
+START_TEST(figure_movement)
 {
-#line 16
+#line 18
   Figure_t *figure = figure_init();
   move_left();
   ck_assert_int_eq(figure->x, 4);
   move_right();
   ck_assert_int_eq(figure->x, 5);
+  move_down();
+  ck_assert_int_eq(figure->y, 3);
+  move_up();
+  ck_assert_int_eq(figure->y, 2);
+  rotate_left(figure->figure);
+  ck_assert_int_eq(figure->y, 2);
+  ck_assert_int_eq(figure->x, 5);
+  rotate_right(figure->figure);
+  ck_assert_int_eq(figure->y, 2);
+  ck_assert_int_eq(figure->x, 5);
+
+}
+END_TEST
+
+START_TEST(creating_figures)
+{
+#line 35
+  Figure_t *figure = figure_init();
+  figure->next_type = 0;
+  figure->next_rotate = 0;
+  spawn();
+  ck_assert_int_eq(figure->next[1][0], 1);
+  ck_assert_int_eq(figure->next[1][1], 1);
+  ck_assert_int_eq(figure->next[1][2], 1);
+  ck_assert_int_eq(figure->next[1][3], 1);
+
+  figure->next_type = 1;
+  spawn();
+  ck_assert_int_eq(figure->next[1][1], 2);
+  ck_assert_int_eq(figure->next[2][1], 2);
+  ck_assert_int_eq(figure->next[2][2], 2);
+  ck_assert_int_eq(figure->next[2][3], 2);
+
+  figure->next_type = 2;
+  spawn();
+  ck_assert_int_eq(figure->next[1][2], 3);
+  ck_assert_int_eq(figure->next[2][2], 3);
+  ck_assert_int_eq(figure->next[2][1], 3);
+  ck_assert_int_eq(figure->next[2][0], 3);
+
+  figure->next_type = 3;
+  spawn();
+  ck_assert_int_eq(figure->next[1][1], 4);
+  ck_assert_int_eq(figure->next[1][2], 4);
+  ck_assert_int_eq(figure->next[2][1], 4);
+  ck_assert_int_eq(figure->next[2][2], 4);
+
+  figure->next_type = 4;
+  spawn();
+  ck_assert_int_eq(figure->next[1][2], 5);
+  ck_assert_int_eq(figure->next[1][1], 5);
+  ck_assert_int_eq(figure->next[2][1], 5);
+  ck_assert_int_eq(figure->next[2][0], 5);
+
+  figure->next_type = 5;
+  spawn();
+  ck_assert_int_eq(figure->next[1][1], 6);
+  ck_assert_int_eq(figure->next[2][0], 6);
+  ck_assert_int_eq(figure->next[2][1], 6);
+  ck_assert_int_eq(figure->next[2][2], 6);
+
+  figure->next_type = 6;
+  spawn();
+  ck_assert_int_eq(figure->next[1][1], 7);
+  ck_assert_int_eq(figure->next[1][2], 7);
+  ck_assert_int_eq(figure->next[2][2], 7);
+  ck_assert_int_eq(figure->next[2][3], 7);
+
+}
+END_TEST
+
+START_TEST(bumping)
+{
+#line 87
+  Figure_t *figure = figure_init();
+  figure->next_type = 0;
+  figure->next_rotate = 0;
+  spawn();
+  copy_figure(figure->next, figure->figure);
+  for (int i = 0; i < 10; i++) {
+    move_left();
+  }
+  ck_assert_int_eq(figure->x, 2);
+  for (int i = 0; i < 10; i++) {
+    move_right();
+  }
+  ck_assert_int_eq(figure->x, 8);
 }
 END_TEST
 
 int main(void)
 {
-    Suite *s1 = suite_create("Core");
-    TCase *tc1_1 = tcase_create("Core");
+    Suite *s1 = suite_create("Game");
+    TCase *tc1_1 = tcase_create("Game");
+    Suite *s2 = suite_create("Figure");
+    TCase *tc2_1 = tcase_create("Figure");
     SRunner *sr = srunner_create(s1);
     int nf;
 
     suite_add_tcase(s1, tc1_1);
     tcase_add_test(tc1_1, initialization);
-    tcase_add_test(tc1_1, movement);
+    suite_add_tcase(s2, tc2_1);
+    tcase_add_test(tc2_1, figure_movement);
+    tcase_add_test(tc2_1, creating_figures);
+    tcase_add_test(tc2_1, bumping);
+
+    srunner_add_suite(sr, s2);
 
     srunner_run_all(sr, CK_ENV);
     nf = srunner_ntests_failed(sr);

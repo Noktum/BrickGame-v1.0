@@ -1,6 +1,7 @@
 #include <check.h>
 #include "../brick_game/brickgame.h"
 
+#suite Game
 #test initialization
   GameInfo_t info = updateCurrentState();
   Figure_t *figure = figure_init();
@@ -12,9 +13,87 @@
   ck_assert_int_eq(figure->x, 5);
   ck_assert_int_eq(figure->y, 2);
 
-#test movement
+#suite Figure
+#test figure_movement
   Figure_t *figure = figure_init();
   move_left();
   ck_assert_int_eq(figure->x, 4);
   move_right();
   ck_assert_int_eq(figure->x, 5);
+  move_down();
+  ck_assert_int_eq(figure->y, 3);
+  move_up();
+  ck_assert_int_eq(figure->y, 2);
+  rotate_left(figure->figure);
+  ck_assert_int_eq(figure->y, 2);
+  ck_assert_int_eq(figure->x, 5);
+  rotate_right(figure->figure);
+  ck_assert_int_eq(figure->y, 2);
+  ck_assert_int_eq(figure->x, 5);
+
+#test creating_figures
+  Figure_t *figure = figure_init();
+  figure->next_type = 0;
+  figure->next_rotate = 0;
+  spawn();
+  ck_assert_int_eq(figure->next[1][0], 1);
+  ck_assert_int_eq(figure->next[1][1], 1);
+  ck_assert_int_eq(figure->next[1][2], 1);
+  ck_assert_int_eq(figure->next[1][3], 1);
+
+  figure->next_type = 1;
+  spawn();
+  ck_assert_int_eq(figure->next[1][1], 2);
+  ck_assert_int_eq(figure->next[2][1], 2);
+  ck_assert_int_eq(figure->next[2][2], 2);
+  ck_assert_int_eq(figure->next[2][3], 2);
+
+  figure->next_type = 2;
+  spawn();
+  ck_assert_int_eq(figure->next[1][2], 3);
+  ck_assert_int_eq(figure->next[2][2], 3);
+  ck_assert_int_eq(figure->next[2][1], 3);
+  ck_assert_int_eq(figure->next[2][0], 3);
+
+  figure->next_type = 3;
+  spawn();
+  ck_assert_int_eq(figure->next[1][1], 4);
+  ck_assert_int_eq(figure->next[1][2], 4);
+  ck_assert_int_eq(figure->next[2][1], 4);
+  ck_assert_int_eq(figure->next[2][2], 4);
+
+  figure->next_type = 4;
+  spawn();
+  ck_assert_int_eq(figure->next[1][2], 5);
+  ck_assert_int_eq(figure->next[1][1], 5);
+  ck_assert_int_eq(figure->next[2][1], 5);
+  ck_assert_int_eq(figure->next[2][0], 5);
+
+  figure->next_type = 5;
+  spawn();
+  ck_assert_int_eq(figure->next[1][1], 6);
+  ck_assert_int_eq(figure->next[2][0], 6);
+  ck_assert_int_eq(figure->next[2][1], 6);
+  ck_assert_int_eq(figure->next[2][2], 6);
+
+  figure->next_type = 6;
+  spawn();
+  ck_assert_int_eq(figure->next[1][1], 7);
+  ck_assert_int_eq(figure->next[1][2], 7);
+  ck_assert_int_eq(figure->next[2][2], 7);
+  ck_assert_int_eq(figure->next[2][3], 7);
+
+#test bumping
+  Figure_t *figure = figure_init();
+  figure->next_type = 0;
+  figure->next_rotate = 0;
+  spawn();
+  copy_figure(figure->next, figure->figure);
+  for (int i = 0; i < 10; i++) {
+    move_left();
+  }
+  ck_assert_int_eq(figure->x, 2);
+  for (int i = 0; i < 10; i++) {
+    move_right();
+  }
+  ck_assert_int_eq(figure->x, 8);

@@ -43,7 +43,7 @@ gcov_report: clean
 	rm *.gcda *.gcno *.info
 
 clean:
-	rm -rf build tetris *.o *.a tetris.tar.gz high_score.txt html latex report
+	rm -rf build tetris *.o *.a tetris.tar.gz high_score.txt html latex report *.gcda *.gcno test
 
 # style:
 # 	cp ../materials/linters/.clang-format .
