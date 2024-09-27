@@ -1,0 +1,20 @@
+#include <check.h>
+#include "../brick_game/brickgame.h"
+
+#test initialization
+  GameInfo_t info = updateCurrentState();
+  Figure_t *figure = figure_init();
+  ck_assert_int_eq(info.level, 1);
+  ck_assert_int_eq(info.score, 0);
+  ck_assert_int_eq(info.speed, 800000);
+  ck_assert_int_eq(info.pause, 1);
+  ck_assert_int_eq(info.high_score, 0);
+  ck_assert_int_eq(figure->x, 5);
+  ck_assert_int_eq(figure->y, 2);
+
+#test movement
+  Figure_t *figure = figure_init();
+  move_left();
+  ck_assert_int_eq(figure->x, 4);
+  move_right();
+  ck_assert_int_eq(figure->x, 5);

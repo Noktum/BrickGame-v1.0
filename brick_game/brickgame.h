@@ -1,7 +1,8 @@
 #ifndef BRICKGAME
 #define BRICKGAME
 
-/// @file brickgame.h
+/// @file
+/// @brief Declaration of structures
 
 #include <stdbool.h>
 
@@ -36,21 +37,22 @@ typedef enum {
   PAUSE,     ///< Pause state when game is freezed
   SPAWN,     ///< State, when new figure appears on field
   MOVING,    ///< State, when figure moves 1 step down
-  SHIFTING,  ///< State, when playes can rotate and move figure in different directions
+  SHIFTING,  ///< State, when playes can rotate and move figure in different
+             ///< directions
   GAMEOVER,  ///< If field overflows, this state activates
   WIN,       ///< If player reaches 11 level, this state activates
   ATTACH     ///< State, when figure attaches to field
 } GameState_t;
 
-int read_high_score();
-void update_high_score_file(int score);
 GameInfo_t *struct_init();
 GameInfo_t updateCurrentState();
+GameState_t *state_getter();
+int read_high_score();
+void update_high_score_file(int score);
 void game_end();
 bool check_collide();
 void delete_line(int str);
 void score_fnc();
-GameState_t *state_getter();
 void shifting(UserAction_t action, bool hold);
 void moving(clock_t *start, clock_t *end);
 void userInput(UserAction_t action, bool hold);

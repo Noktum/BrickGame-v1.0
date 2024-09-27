@@ -1,8 +1,8 @@
 #ifndef TETRIS
 #define TETRIS
 
-/// @file backend.h
-/// @brief Declarates Figure_t structure and functions used with it
+/// @file
+/// @brief Declaration of Figure_t structure and functions used with it
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,7 +14,6 @@ typedef struct {
   int **next;       ///< Next generated figure in game stats windows
   int x;            ///< Horizontal coordinate of figure
   int y;            ///< Vertical coordinate of figure
-  int type;         ///< Type of figure for frontend
   int next_type;    ///< Type of next figure for creating it
   int next_rotate;  ///< Random rotation of next figure
 } Figure_t;

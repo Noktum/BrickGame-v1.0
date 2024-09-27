@@ -1,33 +1,13 @@
 #include "brickgame.h"
 
-/// @file brickgame.c
-
-/// @brief Reads high score from file "high_score.txt"
-/// @return Readed high score of previous games from file
-int read_high_score() {
-  int score = 0;
-  FILE *f = fopen("high_score.txt", "r");
-  if (f) {
-    fscanf(f, "%d", &score);
-    fclose(f);
-  }
-  return score;
-}
-
-/**
- * @brief Checks if current score is > than the highest => updates file
- * "high_score.txt"
- * @param score - current score in the game **/
-void update_high_score_file(int score) {
-  FILE *f = fopen("high_score.txt", "w");
-  if (f) {
-    fprintf(f, "%d", score);
-    fclose(f);
-  }
-}
+/// @file
+/// @brief Implementation of functions from brickgame.h
+/// @details This file contains realization of user actions, initialization of
+/// GameInfo_t and GameState_t structures, Finite State Machine of the game and
+/// its mechanics such as scoring, level and speed changes
 
 /// @brief Initializes the game information
-/// @return Structure with game information
+/// @return Structure pointer with game information
 GameInfo_t *struct_init() {
   static GameInfo_t info;
   if (info.field == NULL) {
@@ -55,7 +35,38 @@ GameInfo_t updateCurrentState() {
   return *info;
 }
 
-/// free field and next figure
+/// @brief Getting the current game state
+/// @return GameState_t pointer
+GameState_t *state_getter() {
+  static GameState_t state = START;
+  return &state;
+}
+
+/// @brief Reads high score from file "high_score.txt"
+/// @return Readed high score of previous games from file
+int read_high_score() {
+  int score = 0;
+  FILE *f = fopen("high_score.txt", "r");
+  if (f) {
+    fscanf(f, "%d", &score);
+    fclose(f);
+  }
+  return score;
+}
+
+/**
+ * @brief Checks if current score is > than the highest => updates file
+ * "high_score.txt"
+ * @param score - current score in the game **/
+void update_high_score_file(int score) {
+  FILE *f = fopen("high_score.txt", "w");
+  if (f) {
+    fprintf(f, "%d", score);
+    fclose(f);
+  }
+}
+
+/// @brief Free memory of game field and all figures
 void game_end() {
   GameInfo_t *info = struct_init();
   Figure_t *figure = figure_init();
@@ -112,12 +123,11 @@ void delete_line(int str) {
 void score_fnc() {
   GameInfo_t *info = struct_init();
   int number = 0;
-  int flag = 0;  //< Indicates that line is empty
-  for (int i = 1; i <= 20; i++) {
-    for (int j = 1; j <= 10; j++) {
+  int flag = 0;  // Indicates that line is empty
+  for (int i = 1; i <= 20 && !flag; i++) {
+    for (int j = 1; j <= 10 && !flag; j++) {
       if (info->field[i][j] == 0) {
         flag = 1;
-        break;
       }
     }
     if (flag == 0) {
@@ -137,23 +147,16 @@ void score_fnc() {
   if (info->score > info->high_score) {
     info->high_score = info->score;
     update_high_score_file(
-        info->high_score);  ///< Updating highest score if current is higher
+        info->high_score);  // Updating highest score if current is higher
   }
   if (info->level * 600 <= info->score) {
-    srand(time(NULL));  ///< Randomizing figures per each level
+    srand(time(NULL));  // Randomizing figures per each level
     double coefficient =
         1.6 - (double)info->level /
-                  15;  ///< Special formula for smooth increase of speed
+                  15;  // Special formula for smooth increase of speed
     info->level = info->score / 600 + 1;
-    info->speed = info->speed / coefficient;  ///< Increasing speed
+    info->speed = info->speed / coefficient;  // Increasing speed
   }
-}
-
-/// @brief Getting the current game state
-/// @return GameState_t pointer
-GameState_t *state_getter() {
-  static GameState_t state = START;
-  return &state;
 }
 
 /// @brief Moving figure in any directions while state == SHIFTING

@@ -1,7 +1,8 @@
 #include "backend.h"
 
-/// @file tetris.c
+/// @file
 /// @brief Implementation of functions from backend.h
+/// @details
 
 /// @brief Initializes falling figure and its information
 /// @return Figure_t structure
@@ -12,10 +13,9 @@ Figure_t *figure_init() {
     figure.y = 2;
     figure.figure = figure_alloc();
     figure.next = figure_alloc();
-    figure.next_rotate = rand() % 4;
-    figure.type = rand() % 7;
-    spawn();
     figure.next_type = rand() % 7;
+    figure.next_rotate = rand() % 4;
+    spawn();
   }
   return &figure;
 }
@@ -140,7 +140,7 @@ void spawn() {
   int **matrix = figure->next;
   clear_figure(matrix);
   switch (figure->next_type) {
-    case 0:  // ----
+    case 0:  // I
       matrix[1][0] = matrix[1][1] = matrix[1][2] = matrix[1][3] = 1;
       break;
     case 1:  // J
@@ -149,7 +149,7 @@ void spawn() {
     case 2:  // L
       matrix[1][2] = matrix[2][2] = matrix[2][1] = matrix[2][0] = 3;
       break;
-    case 3:  // cube
+    case 3:  // O
       matrix[1][1] = matrix[1][2] = matrix[2][1] = matrix[2][2] = 4;
       break;
     case 4:  // S
@@ -170,12 +170,11 @@ void spawn() {
 /// @brief Recreates figure on field, generates next figure
 void figure_respawn() {
   Figure_t *figure = figure_init();
-  figure->x = 4;
+  figure->x = 5;
   figure->y = 2;
 
   copy_figure(figure->next, figure->figure);
-  figure->type = figure->next_type;
-  spawn();
   figure->next_type = rand() % 7;
   figure->next_rotate = rand() % 4;
+  spawn();
 }
