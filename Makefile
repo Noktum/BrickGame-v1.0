@@ -1,9 +1,16 @@
 SHELL = /bin/sh
 GCC = gcc -Wall -Wextra -Werror -std=c11 -g
-TEST = -lcheck -lsubunit -lm
+TEST = -lcheck -lm
+COVERAGE = --capture
 FILES = brickgame.c brick_game/tetris/tetris.c gui/cli/frontend.c brick_game/brickgame.c
 BACK = brick_game/tetris/tetris.c brick_game/brickgame.c
 OS = $(shell uname)
+
+ifeq ($(OS), Linux)
+TEST += -lsubunit
+else
+COVERAGE += --filter range
+endif
 
 all: clean install dvi
 	./build/tetris
@@ -34,11 +41,12 @@ test: clean lib
 	./test
 
 gcov_report: clean
+	checkmk tests/tetris_test.check > tests/tetris_test.c
 	${GCC} --coverage tests/tetris_test.c $(BACK) $(TEST) -o test
 	./test
-	lcov --capture --directory . -o coverage.info
+	lcov $(COVERAGE) --directory . -o coverage.info
 	lcov --extract coverage.info '*/brick_game/*' -o coverage_filter.info
-	genhtml --output-directory report --legend coverage_filter.info
+	genhtml --output-directory report --legend coverage_filter.info 
 	open report/index.html
 	rm *.gcda *.gcno *.info
 

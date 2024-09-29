@@ -7,13 +7,15 @@
 
 #line 1 "tests/tetris_test.check"
 #include <check.h>
+#include <unistd.h>
 #include "../brick_game/brickgame.h"
 
 START_TEST(initialization)
 {
-#line 6
+#line 7
   GameInfo_t info = updateCurrentState();
   Figure_t *figure = figure_init();
+  GameState_t *state = state_getter();
   ck_assert_int_eq(info.level, 1);
   ck_assert_int_eq(info.score, 0);
   ck_assert_int_eq(info.speed, 800000);
@@ -21,12 +23,34 @@ START_TEST(initialization)
   ck_assert_int_eq(info.high_score, 0);
   ck_assert_int_eq(figure->x, 5);
   ck_assert_int_eq(figure->y, 2);
+  ck_assert_int_eq(*state, START);
+
+}
+END_TEST
+
+START_TEST(game_tick)
+{
+#line 20
+  clock_t start = clock();
+  clock_t end;
+  GameState_t *state = state_getter();
+  userInput(Start, false);
+  ck_assert_int_eq(*state, SPAWN);
+  userInput(Start, false);
+  ck_assert_int_eq(*state, MOVING);
+  moving(&start, &end);
+  userInput(Down, true);
+  for (int i = 0; i < 100; i++) {
+    userInput(-1, true);
+    moving(&start, &end);
+  }
+  moving(&start, &end);
 
 }
 END_TEST
 START_TEST(figure_movement)
 {
-#line 18
+#line 37
   Figure_t *figure = figure_init();
   move_left();
   ck_assert_int_eq(figure->x, 4);
@@ -48,7 +72,7 @@ END_TEST
 
 START_TEST(creating_figures)
 {
-#line 35
+#line 54
   Figure_t *figure = figure_init();
   figure->next_type = 0;
   figure->next_rotate = 0;
@@ -105,7 +129,7 @@ END_TEST
 
 START_TEST(bumping)
 {
-#line 87
+#line 106
   Figure_t *figure = figure_init();
   figure->next_type = 0;
   figure->next_rotate = 0;
@@ -133,6 +157,7 @@ int main(void)
 
     suite_add_tcase(s1, tc1_1);
     tcase_add_test(tc1_1, initialization);
+    tcase_add_test(tc1_1, game_tick);
     suite_add_tcase(s2, tc2_1);
     tcase_add_test(tc2_1, figure_movement);
     tcase_add_test(tc2_1, creating_figures);

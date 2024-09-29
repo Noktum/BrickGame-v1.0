@@ -1,10 +1,12 @@
 #include <check.h>
+#include <unistd.h>
 #include "../brick_game/brickgame.h"
 
 #suite Game
 #test initialization
   GameInfo_t info = updateCurrentState();
   Figure_t *figure = figure_init();
+  GameState_t *state = state_getter();
   ck_assert_int_eq(info.level, 1);
   ck_assert_int_eq(info.score, 0);
   ck_assert_int_eq(info.speed, 800000);
@@ -12,6 +14,23 @@
   ck_assert_int_eq(info.high_score, 0);
   ck_assert_int_eq(figure->x, 5);
   ck_assert_int_eq(figure->y, 2);
+  ck_assert_int_eq(*state, START);
+
+#test game_tick
+  clock_t start = clock();
+  clock_t end;
+  GameState_t *state = state_getter();
+  userInput(Start, false);
+  ck_assert_int_eq(*state, SPAWN);
+  userInput(Start, false);
+  ck_assert_int_eq(*state, MOVING);
+  moving(&start, &end);
+  userInput(Down, true);
+  for (int i = 0; i < 100; i++) {
+    userInput(-1, true);
+    moving(&start, &end);
+  }
+  moving(&start, &end);
 
 #suite Figure
 #test figure_movement

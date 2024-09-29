@@ -23,3 +23,5 @@ test
 *.gcda
 *.gcno
 report
+test.dSYM
+.DS_Store
